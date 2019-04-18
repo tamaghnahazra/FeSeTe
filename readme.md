@@ -1,9 +1,10 @@
-# Tight binding model and ARPES matrix element analysis for FeSe_xTe_{1-x}
+# Tight binding model and ARPES matrix element analysis for $FeSe_xTe_{1-x}$
 
-dsfgsdfg
+## TB model
 
-## Kenta lagla?
+functions in includeables/functions.py
+code in trial.py
 
-Doing something
+## Matrix elements 
 
-Badhiyaan
+In MatrixElements.nb
