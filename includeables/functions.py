@@ -6,7 +6,7 @@ import matplotlib.pyplot as plt
 def show():
 	plt.show(block=False)
 
-def model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp=1000.,md1=1000.,md2=1000.,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=0.,txydiag=0.,X=0.,Xz=0.,l1plane=0.,l1diag=0.,ldirac=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.,kx=0.,ky=0.):
+def model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp=1000.,md1=1000.,md2=1000.,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=0.,txydiag=0.,X=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.,kx=0.,ky=0.):
 	my_model=tb_model(dim_r=1,dim_k=1,lat=[[1.0]],orb=3,nspin=2)
 	
 	### diagonal terms
@@ -31,8 +31,8 @@ def model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp=1000.,md1=1000.,md2=1000.,tdiagp=0.,tdiag
 	my_model.set_hop([0.,0.,0., (l1z+l1diag*(kx**2+ky**2))*1.0j], 1, 2, [1.],mode="add")
 	my_model.set_hop([0.,0.,0., (l1z+l1diag*(kx**2+ky**2))*1.0j], 1, 2, [-1.],mode="add")
 	#(\sigma_x kx +\sigma_y ky)\sin kz
-	my_model.set_hop([0., ldirac*kx*1.0j, ldirac*ky*1.0j,0.],1,2,[1.],mode="add")
-	my_model.set_hop([0.,-ldirac*kx*1.0j,-ldirac*ky*1.0j,0.],1,2,[-1.],mode="add")
+	my_model.set_hop([0., ldirac*kx*1.0j, lWeyl*ky*1.0j,0.],1,2,[1.],mode="add")
+	my_model.set_hop([0.,-ldirac*kx*1.0j,-lWeyl*ky*1.0j,0.],1,2,[-1.],mode="add")
 	
 	### pz (dyz,dxz) terms
 	#(kx,ky)(1+\cos kz)
