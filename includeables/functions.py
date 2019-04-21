@@ -68,18 +68,6 @@ def model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp=1000.,md1=1000.,md2=1000.,tdiagp=0.,tdiag
 def model1dcut(ep,ed,tzp,tzd,l1,l1z,l3,nsites,mp=0.,md1=0.,md2=0.,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=0.,txydiag=0.,X=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.,kx=0.,ky=0.):
 	return model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp,md1,md2,tdiagp,tdiagd1,tdiagd2,txy,txydiag,X,Xz,l1plane,l1diag,lWeyl,l3plane1,l3plane2,l3xy,l3x2y2,kx,ky).cut_piece(num=nsites,fin_dir=[0],glue_edgs=False)
 
-def plotGZ(kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004):
-	FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3)
-	plt.figure()
-	kzarr=np.linspace(0.,1.,num=kpoints)
-	energies=np.empty((6,kzarr.shape[0]))
-	for id,kz in enumerate(kzarr):
-		energies[:,id]=FST_bulk.solve_one([kz])
-	for band in energies:
-		plt.plot(kzarr,band*1000.)
-	plt.tight_layout()
-	show()
-
 # allows opt='none','dxzweightsAsLineplot','dxzweightsAsMarkersize'
 def plotGZ(opt='none',sizescale=100.,bandindices=[0,1,2,3,4,5],kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004):
 	FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3)
@@ -136,30 +124,9 @@ def plotGX(kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005
 	plt.tight_layout()
 	show()
 
-def plotdxzweight(bandindices=[0,1,2,3,4,5],kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=0.1316,md1=0.109,md2=2.5,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=-4.4,txydiag=0.,X=0.412,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.):
-	plotGZ(kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=0.,l3=0.004)
-	mask=np.diag(np.array([0.,0.,0.,0.,1.,1.]))
-	FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3)
-	plt.figure()
-	kzarr=np.linspace(0.,1.,num=kpoints)
-	dxzweights=np.empty((6,kzarr.shape[0]))
-	for id,kz in enumerate(kzarr):
-		#columns of eigvec are eigenvectors
-		eigvec=np.reshape(FST_bulk.solve_one([kz],eig_vectors=True)[1],(6,6)).T
-		dxzweights[:,id]=np.diag(np.conjugate(eigvec.T) @ mask @ eigvec)
-	for id,wt in enumerate(dxzweights):
-		if id in bandindices:
-			plt.plot(kzarr,wt)
-	plt.tight_layout()
-	show()
-
 plotGZ(kpoints=500,l1z=-0.0005)
 plotGM(kpoints=500)
 plotGX(kpoints=500)
 
-plotdxzweight(bandindices=[0,1],kpoints=500,l1z=-0.0005)
 plotGZ(opt='dxzweightsAsMarkersize',sizescale=50.)
-plotGZ(opt='dxzweightsAsLineplot')
-plotGZ()
-plotGZwithdxzweight(sizescale=50.)
-plotdxzweight()
+plotGZ(opt='dxzweightsAsLineplot',bandindices=[0,1])
