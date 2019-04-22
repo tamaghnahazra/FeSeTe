@@ -98,35 +98,27 @@ def plotGZ(opt='none',sizescale=100.,bandindices=[0,1,2,3,4,5],kpoints=100,ep=0.
 	plt.tight_layout()
 	show()
 
-def plotGM(kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=0.1316,md1=0.109,md2=2.5,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=-4.4,txydiag=0.,X=0.412,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.):
+
+#takes dir='GM','GX'
+def plotInplane(kz=0.,klim=0.25,yrange=[-80,10],dir='GM',kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=0.1316,md1=-0.109,md2=-2.5,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=-4.4,txydiag=0.,X=0.412,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.):
 	plt.figure()
-	kmarr=np.linspace(0.,0.05,num=kpoints)
+	plt.ylim(yrange)
+	kmarr=np.linspace(-klim/(2*0.3/1.65),klim/(2*0.3/1.65),num=kpoints)
 	#kmarr=np.linspace(0.,0.363,num=kpoints) maps to 0.3 AngsInv
 	energies=np.empty((6,kmarr.shape[0]))
 	for id,km in enumerate(kmarr):
-		FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp,md1,md2,tdiagp,tdiagd1,tdiagd2,txy,txydiag,X,Xz,l1plane,l1diag,lWeyl,l3plane1,l3plane2,l3xy,l3x2y2,kx=1.414*km,ky=1.414*km)
-		energies[:,id]=FST_bulk.solve_one([0.])
+		(kx0,ky0)=(0.707*km,0.707*km) if dir=='GM' else (km,0.)
+		FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp,md1,md2,tdiagp,tdiagd1,tdiagd2,txy,txydiag,X,Xz,l1plane,l1diag,lWeyl,l3plane1,l3plane2,l3xy,l3x2y2,kx=kx0,ky=ky0)
+		energies[:,id]=FST_bulk.solve_one([kz])
 	for band in energies:
-		plt.plot(kmarr,band*1000.)
-	plt.tight_layout()
-	show()
-
-def plotGX(kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=0.1316,md1=0.109,md2=2.5,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=-4.4,txydiag=0.,X=0.412,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.):
-	plt.figure()
-	kxarr=np.linspace(0.,0.05,num=kpoints)
-	#kmarr=np.linspace(0.,0.363,num=kpoints) maps to 0.3 AngsInv
-	energies=np.empty((6,kxarr.shape[0]))
-	for id,kx in enumerate(kxarr):
-		FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp,md1,md2,tdiagp,tdiagd1,tdiagd2,txy,txydiag,X,Xz,l1plane,l1diag,lWeyl,l3plane1,l3plane2,l3xy,l3x2y2,kx=kx,ky=0.)
-		energies[:,id]=FST_bulk.solve_one([0.])
-	for band in energies:
-		plt.plot(kxarr,band*1000.)
+		plt.plot(kmarr*2*0.3/1.65,band*1000.)
 	plt.tight_layout()
 	show()
 
 plotGZ(kpoints=500,l1z=-0.0005)
-plotGM(kpoints=500)
-plotGX(kpoints=500)
-
+#for Gamma
+plotInplane(ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=1.8,md1=-1.8,md2=-1.8,txy=-0.75,X=0*0.412,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txydiag=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.)
+#for Z
+plotInplane(kz=0.25,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=1.8,md1=-1.8,md2=-1.8,txy=-0.75,X=0*0.412,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txydiag=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.)
 plotGZ(opt='dxzweightsAsMarkersize',sizescale=50.)
 plotGZ(opt='dxzweightsAsLineplot',bandindices=[0,1])
