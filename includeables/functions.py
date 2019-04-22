@@ -70,9 +70,15 @@ def model1dcut(ep,ed,tzp,tzd,l1,l1z,l3,nsites,mp=0.,md1=0.,md2=0.,tdiagp=0.,tdia
 
 # allows opt='none','dxzweightsAsLineplot','dxzweightsAsMarkersize'
 def plotGZ(opt='none',sizescale=100.,bandindices=[0,1,2,3,4,5],kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004):
+	plt.rc('text', usetex=True)
+	plt.rcParams['axes.linewidth'] = 2.
+	plt.rc('font', family='serif', serif='Times New Roman',weight='bold')
+	plt.figure(figsize=(7,7.5))
+	plt.axhline(linestyle='--',color='k')
+	plt.ylabel(r"E (meV)", fontsize=25, color='k', x=2.0)
+	plt.xlabel(r'$k_\parallel ($\AA$^{-1}$)', fontsize=25, color='k', x=2.0)
 	FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3)
 	mask=np.diag(np.array([0.,0.,0.,0.,1.,1.]))
-	plt.figure()
 	kzarr=np.linspace(0.,1.,num=kpoints)
 	energies=np.empty((6,kzarr.shape[0]))
 	dxzweights=np.empty((6,kzarr.shape[0]))
@@ -90,19 +96,29 @@ def plotGZ(opt='none',sizescale=100.,bandindices=[0,1,2,3,4,5],kpoints=100,ep=0.
 	elif opt=='dxzweightsAsMarkersize':
 		for id,band in enumerate(energies):
 			if id in bandindices:
-				plt.plot(kzarr,band*1000.,'k-')
-				plt.scatter(kzarr[::1],band[::1]*1000.,s=dxzweights[id,::1]*sizescale, marker='o', facecolors='none', edgecolors='r')
+				plt.plot(kzarr,band*1000.,'k-',lw=2.)
+				plt.scatter(kzarr[::1],band[::1]*1000.,s=dxzweights[id,::1]*sizescale, marker='o', facecolors='none', edgecolors='r',label=r'$d_{xz}$ weight')
+		plt.legend(loc='best',ncol= 2,fontsize=25,frameon=False)
+		plt.title(r'$E(0,0,k_z)$', fontsize=25)
 	else:
 		for band in energies:
 			plt.plot(kzarr,band*1000.)
+	plt.tick_params(axis='y', labelcolor='k', labelsize=20, size=4, width=2 )
+	plt.tick_params(axis='x', labelsize=20,size=4,width=2)		
 	plt.tight_layout()
 	show()
 
 
 #takes dir='GM','GX'
 def plotInplane(kz=0.,klim=0.25,yrange=[-80,10],dir='GM',kpoints=100,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=0.1316,md1=-0.109,md2=-2.5,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txy=-4.4,txydiag=0.,X=0.412,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.):
-	plt.figure()
+	plt.rc('text', usetex=True)
+	plt.rcParams['axes.linewidth'] = 2.
+	plt.rc('font', family='serif', serif='Times New Roman',weight='bold')
+	plt.figure(figsize=(7,7.5))
 	plt.ylim(yrange)
+	plt.axhline(linestyle='--',color='k')
+	plt.ylabel(r"E (meV)", fontsize=25, color='k', x=2.0)
+	plt.xlabel(r'$k_\parallel ($\AA$^{-1}$)', fontsize=25, color='k', x=2.0)
 	kmarr=np.linspace(-klim/(2*0.3/1.65),klim/(2*0.3/1.65),num=kpoints)
 	#kmarr=np.linspace(0.,0.363,num=kpoints) maps to 0.3 AngsInv
 	energies=np.empty((6,kmarr.shape[0]))
@@ -111,14 +127,15 @@ def plotInplane(kz=0.,klim=0.25,yrange=[-80,10],dir='GM',kpoints=100,ep=0.,ed=-0
 		FST_bulk=model1d(ep,ed,tzp,tzd,l1,l1z,l3,mp,md1,md2,tdiagp,tdiagd1,tdiagd2,txy,txydiag,X,Xz,l1plane,l1diag,lWeyl,l3plane1,l3plane2,l3xy,l3x2y2,kx=kx0,ky=ky0)
 		energies[:,id]=FST_bulk.solve_one([kz])
 	for band in energies:
-		plt.plot(kmarr*2*0.3/1.65,band*1000.)
+		plt.plot(kmarr*2*0.3/1.65,band*1000.,'k-', lw=2.0)
+	plt.tick_params(axis='y', labelcolor='k', labelsize=20, size=4, width=2 )
+	plt.tick_params(axis='x', labelsize=20,size=4,width=2)
+	plt.legend(loc='best',ncol= 2,fontsize=25,frameon=False)
+	plt.title(r'E($k_\parallel \in \Gamma M,k_z=$'+str(2*kz)+r'$\pi/c)$', fontsize=25)
 	plt.tight_layout()
 	show()
 
 plotGZ(kpoints=500,l1z=-0.0005)
-#for Gamma
-plotInplane(ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=1.8,md1=-1.8,md2=-1.8,txy=-0.75,X=0*0.412,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txydiag=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.)
-#for Z
-plotInplane(kz=0.25,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=1.8,md1=-1.8,md2=-1.8,txy=-0.75,X=0*0.412,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txydiag=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.)
-plotGZ(opt='dxzweightsAsMarkersize',sizescale=50.)
+plotInplane(kz=-0.25,ep=0.,ed=-0.002,tzp=0.01,tzd=-0.00425,l1=0.01,l1z=-0.0005,l3=0.004,mp=1.8,md1=-1.8,md2=-1.8,txy=-0.75,X=0*0.412,tdiagp=0.,tdiagd1=0.,tdiagd2=0.,txydiag=0.,Xz=0.,l1plane=0.,l1diag=0.,lWeyl=0.,l3plane1=0.,l3plane2=0.,l3xy=0.,l3x2y2=0.)
+plotGZ(opt='dxzweightsAsMarkersize',sizescale=100.)
 plotGZ(opt='dxzweightsAsLineplot',bandindices=[0,1])
